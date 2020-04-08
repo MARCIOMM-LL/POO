@@ -3,7 +3,7 @@
 class ContaCorrente
 {
     private $titular;
-    public $agencia;
+    private $agencia;
     private $numero;
     private $saldo;
 
@@ -17,6 +17,7 @@ class ContaCorrente
 
     public function sacar($valor)
     {
+        Validacao::verificaNumerico($valor);
         $this->saldo = $this->saldo - $valor;
 
         #É uma boa prática retornar a própria classe com 
@@ -30,23 +31,43 @@ class ContaCorrente
 
     public function depositar($valor)
     {
+        Validacao::verificaNumerico($valor);
         $this->saldo = $this->saldo + $valor;
         return $this;
     }
 
-    public function getTitular()
+    #Métodos mágicos começam com 2 underlines
+    public function __get($atributo)
     {
-        return $this->titular;
+        Validacao::protegeAtributo($atributo);
+        return $this->$atributo;
+    }
+
+    public function __set($atributo, $valor)
+    {
+        Validacao::protegeAtributo($atributo);
+        $this->$atributo = $valor;
+    }
+
+    private function formataSaldo()
+    {
+        return "R$ " .number_format($this->saldo, 2,",",".");
     }
 
     public function getSaldo()
     {
-        return $this->saldo;
+        return $this->formataSaldo();
     }
 
-    public function setNumero($numero)
+    #A declaração ContaCorrente, está dizendo 
+    #que o parametro $contaCorrente 
+    #é uma instancia da classe ContaCorrente
+    public function transferir(float $valor, ContaCorrente $contaCorrente)
     {
-        return $this->numero = $numero;
+        Validacao::verificaNumerico($valor);
+        $this->sacar($valor);
+        $contaCorrente->depositar($valor);
+        return $this;
     }
 
 }
