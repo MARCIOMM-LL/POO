@@ -51,7 +51,7 @@ class ContaCorrente
 
     private function formataSaldo()
     {
-        return "R$ " .number_format($this->saldo, 2,",",".");
+        return "R$ " . number_format($this->saldo, 2,",",".");
     }
 
     public function getSaldo()
